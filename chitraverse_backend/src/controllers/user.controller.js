@@ -1,7 +1,8 @@
-import { asyncHandler } from "../utils/asyncHandler";
-import apiError from "../utils/apiError";
-import { User } from "../models/user.models";
-import {uploadOnCloudinary} from "../utils/cloudinary"
+import { asyncHandler } from "../utils/asyncHandler.js";
+import {apiError} from "../utils/apiError.js";
+import {apiResponse} from "../utils/apiResponse.js";
+import { User } from "../models/user.models.js";
+import {uploadOnCloudinary} from "../utils/cloudinary.js"
 
 const registerUser = asyncHandler(async (req, res) => {
     const { fullname, email, username, password } = req.body;
@@ -23,6 +24,7 @@ const registerUser = asyncHandler(async (req, res) => {
         throw new apiError(409,"User with email or username already exists");
     }
 
+    //File Upload 
     const avatarLocalPath = req.files?.avatar[0]?.path
     const coverLocalPath = req.files?.coverImage[0]?.path
 
@@ -33,6 +35,7 @@ const registerUser = asyncHandler(async (req, res) => {
     const avatar = await uploadOnCloudinary(avatarLocalPath);
     const coverImage = await uploadOnCloudinary(coverLocalPath);
 
+    // Creating user 
     const user = await User.create({
         fullname,
         username : username.toLowerCase(),
@@ -47,6 +50,10 @@ const registerUser = asyncHandler(async (req, res) => {
    if(!createdUser){
      throw new apiError(400, "Something went wrong while registering user");
    }
+
+   return res
+        .status(202)
+        .json(new apiResponse(200, createdUser, "User Registered Successfully"))
 });
 
 export { registerUser };
