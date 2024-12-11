@@ -25,8 +25,8 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 
     //File Upload 
-    const avatarLocalPath = req.files?.avatar[0]?.path
-    const coverLocalPath = req.files?.coverImage[0]?.path
+    const avatarLocalPath = req.files?.avatar?.[0]?.path
+    const coverLocalPath = req.files?.coverImage?.[0]?.path
 
     if(!avatarLocalPath || !coverLocalPath){
         throw new apiError(400, "Avatar or Cover Image is missing");
