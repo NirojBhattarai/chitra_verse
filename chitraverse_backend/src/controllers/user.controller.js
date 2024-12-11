@@ -32,6 +32,21 @@ const registerUser = asyncHandler(async (req, res) => {
 
     const avatar = await uploadOnCloudinary(avatarLocalPath);
     const coverImage = await uploadOnCloudinary(coverLocalPath);
+
+    const user = await User.create({
+        fullname,
+        username : username.toLowerCase(),
+        avatar: avatar.url,
+        coverImage : coverImage.url,
+        email,
+        password
+    })
+
+   const createdUser = await User.findById(user._id).select("-password -refreshToken");
+
+   if(!createdUser){
+     throw new apiError(400, "Something went wrong while registering user");
+   }
 });
 
 export { registerUser };
