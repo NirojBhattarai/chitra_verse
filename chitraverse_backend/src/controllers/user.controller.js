@@ -2,7 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import {apiError} from "../utils/apiError.js";
 import {apiResponse} from "../utils/apiResponse.js";
 import { User } from "../models/user.models.js";
-import {uploadOnCloudinary} from "../utils/cloudinary.js"
+import {deleteFromCloudinary, uploadOnCloudinary} from "../utils/cloudinary.js"
 
 const registerUser = asyncHandler(async (req, res) => {
     const { fullname, email, username, password } = req.body;
@@ -49,24 +49,37 @@ const registerUser = asyncHandler(async (req, res) => {
    }
 
     // Creating user 
-    const user = await User.create({
-        fullname,
-        username : username.toLowerCase(),
-        avatar: avatar.url,
-        coverImage : coverImage.url,
-        email,
-        password
-    });
+    try {
+        const user = await User.create({
+            fullname,
+            username : username.toLowerCase(),
+            avatar: avatar.url,
+            coverImage : coverImage.url,
+            email,
+            password
+        });
+    
+       const createdUser = await User.findById(user._id).select("-password -refreshToken");
+    
+       if(!createdUser){
+         throw new apiError(400, "Something went wrong while registering user");
+       }
+    
+       return res
+            .status(202)
+            .json(new apiResponse(200, createdUser, "User Registered Successfully"))
+    } catch (error) {
+        console.log("User Creation Failed");
+        
+        if(avatar){
+            await deleteFromCloudinary(avatar.public_id);
+        }
 
-   const createdUser = await User.findById(user._id).select("-password -refreshToken");
-
-   if(!createdUser){
-     throw new apiError(400, "Something went wrong while registering user");
-   }
-
-   return res
-        .status(202)
-        .json(new apiResponse(200, createdUser, "User Registered Successfully"))
+        if(coverImage){
+            await deleteFromCloudinary(coverImage.public_id);
+        }
+        throw new apiError(400, "Something went wrong while registering user and images were deleted");
+    }
 });
 
 export { registerUser };
