@@ -43,7 +43,7 @@ const registerUser = asyncHandler(async (req, res) => {
    let coverImage;
    try {
      coverImage = await uploadOnCloudinary(coverLocalPath);
-     console.log("Avatar uploaded successfully",coverImage);
+     console.log("Cover Image uploaded successfully",coverImage);
    } catch (error) {
     console.log("Error Uploading Cover Image",error)
    }
