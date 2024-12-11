@@ -32,8 +32,21 @@ const registerUser = asyncHandler(async (req, res) => {
         throw new apiError(400, "Avatar or Cover Image is missing");
     }
 
-    const avatar = await uploadOnCloudinary(avatarLocalPath);
-    const coverImage = await uploadOnCloudinary(coverLocalPath);
+   let avatar;
+   try {
+     avatar = await uploadOnCloudinary(avatarLocalPath);
+     console.log("Avatar uploaded successfully",avatar);
+   } catch (error) {
+    console.log("Error Uploading Avatar",error)
+   }
+
+   let coverImage;
+   try {
+     coverImage = await uploadOnCloudinary(coverLocalPath);
+     console.log("Avatar uploaded successfully",coverImage);
+   } catch (error) {
+    console.log("Error Uploading Cover Image",error)
+   }
 
     // Creating user 
     const user = await User.create({
@@ -43,7 +56,7 @@ const registerUser = asyncHandler(async (req, res) => {
         coverImage : coverImage.url,
         email,
         password
-    })
+    });
 
    const createdUser = await User.findById(user._id).select("-password -refreshToken");
 
