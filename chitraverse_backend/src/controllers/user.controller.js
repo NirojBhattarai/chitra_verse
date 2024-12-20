@@ -273,4 +273,38 @@ const getUser = asyncHandler(async(req, res)=>{
   .json(new apiResponse(200,req.user, "Current User Details Fetched Successfully"))
 });
 
-export { registerUser, loginUser, refreshAccessToken, logoutUser, changeCurrentPassword, getUser };
+const updateAccountDetails = asyncHandler(async(req,res)=>{
+  const {fullname, email} = req.body;
+
+  // validate required field
+  if (
+    [fullname, email].some((field) => field?.trim() === "")
+  ) {
+    throw new apiError(400, "All fields are required");
+  }
+
+  const user = await User.findByIdAndUpdate(req.user?._id,{
+    $set:{
+      fullname,
+      email
+    }
+  },
+{
+  new:true
+}).select("-password -refreshToken"); 
+
+return res
+.status(200)
+.json(new apiResponse(200,user,"User Details Updated Successfully"));
+
+})
+
+export { 
+  registerUser, 
+  loginUser, 
+  refreshAccessToken, 
+  logoutUser, 
+  changeCurrentPassword, 
+  getUser,
+  updateAccountDetails
+};
