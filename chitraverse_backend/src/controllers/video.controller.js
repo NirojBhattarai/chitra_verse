@@ -10,8 +10,8 @@ const getAllVideos = asyncHandler(async (req, res) => {
     limit = 10,
     query = "",
     sortBy = "createdAt",
-    sortType = "desc",
-    userId,
+    sortType = "desc", 
+    userId = req.user._id,
   } = req.query;
 
   const pageNumber = parseInt(page, 10);
@@ -57,5 +57,8 @@ const getAllVideos = asyncHandler(async (req, res) => {
     throw new apiError(400, "Error while fetching videos");
   }
 });
+
+const publishVideos = asyncHandler(async(req, res) => {
+})
 
 export { getAllVideos };
