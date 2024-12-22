@@ -2,6 +2,8 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { Video } from "../models/video.models.js";
 import { apiResponse } from "../utils/apiResponse.js";
 import { apiError } from "../utils/apiError.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { getVideoDuration } from "../middlewares/fluent-ffmpeg.middlewares.js";
 
 //Endpoint to fetch videos
 const getAllVideos = asyncHandler(async (req, res) => {
@@ -10,7 +12,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
     limit = 10,
     query = "",
     sortBy = "createdAt",
-    sortType = "desc", 
+    sortType = "desc",
     userId = req.user._id,
   } = req.query;
 
@@ -58,7 +60,71 @@ const getAllVideos = asyncHandler(async (req, res) => {
   }
 });
 
-const publishVideos = asyncHandler(async(req, res) => {
-})
+//Endpoint to upload videos
+const publishVideos = asyncHandler(async (req, res) => {
+  const { title, description} = req.body;
 
-export { getAllVideos };
+  // Check title and description in request body
+  if (!title || !description) {
+    throw new apiError(400, "All fields are required");
+  }
+
+  // Check Video File and Thumbnail in request
+  const videoFileLocalPath = req.files?.videoFile?.[0]?.path;
+  const thumbnailLocalPath = req.files?.thumbnail?.[0].path;
+
+  if (!videoFileLocalPath || !thumbnailLocalPath) {
+    throw new apiError(400, "Video File or Thumbnail is missing");
+  }
+
+  const duration = await getVideoDuration(videoFileLocalPath);
+  
+  // Uploading VideoFile and Thumbnail in Cloudinary
+  let videoFile;
+
+  try {
+    videoFile = await uploadOnCloudinary(videoFileLocalPath);
+    console.log("Video Uploaded Successfully");
+  } catch {
+    throw new apiError(400, "Error Uploading Video in CLoudinary");
+  }
+
+  let thumbnail;
+
+  try {
+    thumbnail = await uploadOnCloudinary(thumbnailLocalPath);
+    console.log("Thumbnail Uploaded Successfully");
+  } catch {
+    throw new apiError(400, "Error Uploading Thumbnail in Cloudinary");
+  }
+
+  if (!duration) {
+    throw new apiError(400, "Error generating duration of Video File");
+  }
+
+  // Creating New Video Record
+  try {
+    const video = await Video.create({
+      videoFile: videoFile.url,
+      thumbnail: thumbnail.url,
+      title,
+      description,
+      duration: duration/60,
+      isPublished: true,
+      owner:req.user._id,
+    });
+
+    if (!video) {
+      throw new apiError(400, "Error Creating Video File");
+    }
+
+    return res
+      .status(200)
+      .json(new apiResponse(200, video, "Vide File Uploaded Successfully"));
+  } catch (error) {
+    console.log("Error Creating Video Record", error);
+    throw new apiError(400, "Something went wrong while uploading video");
+  }
+});
+
+export { getAllVideos, publishVideos };
