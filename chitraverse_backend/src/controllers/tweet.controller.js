@@ -54,4 +54,65 @@ const getUserTweets = asyncHandler(async (req, res) => {
   }
 });
 
-export { createTweet, getUserTweets };
+const updateTweet = asyncHandler(async (req, res) => {
+  const { id: _id } = req.params;
+
+  if (!_id) {
+    throw new apiError(400, "Tweet Id is invalid or Missing");
+  }
+
+  const { content } = req.body;
+
+  if (!content) {
+    throw new apiError(400, "Content is Required");
+  }
+
+  try {
+    const tweet = await Tweet.findByIdAndUpdate(
+      _id,
+      {
+        content,
+      },
+      {
+        new: true,
+      }
+    );
+
+    if (!tweet) {
+      throw new apiError(400, "Tweet Update Failed");
+    }
+
+    return res
+      .status(200)
+      .json(new apiResponse(200, tweet, "Tweet Updated Successfully"));
+  } catch (error) {
+    console.log("Error while Updating Tweet", error);
+    throw new apiError(400, "Something went wrong while Updating Tweet");
+  }
+});
+
+const deleteTweet = asyncHandler(async (req, res) => {
+  const {id: _id} = req.params;
+
+  if(!_id){
+    throw new apiError(400, "Invalid Tweet Id or Missing")
+  }
+
+  try {
+    const tweet = await Tweet.findByIdAndDelete(_id);
+
+    if(!tweet){
+      throw new apiError(400, "Tweet Deletion Failed or Already Deleted");
+    }
+
+    return res
+    .status(200)
+    .json(new apiResponse(200,"Tweet Deleted Successfully"));
+  } catch (error) {
+    console.log("Error while deleting tweet", error);
+    throw new apiError(400, "Error Deleting Tweets");
+  }
+
+});
+
+export { createTweet, getUserTweets, updateTweet, deleteTweet };
