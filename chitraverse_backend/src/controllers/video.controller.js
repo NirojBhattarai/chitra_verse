@@ -151,6 +151,7 @@ const getVideoById = asyncHandler(async (req, res) => {
   }
 });
 
+//Endpoint to update video details
 const updateVideo = asyncHandler(async (req, res) => {
   const { id: _id } = req.params;
 
@@ -180,7 +181,7 @@ const updateVideo = asyncHandler(async (req, res) => {
       throw new apiError(404, "Error While Updating Video Details");
     }
 
-    video.save();
+    await video.save();
 
     return res
       .status(200)
@@ -191,4 +192,30 @@ const updateVideo = asyncHandler(async (req, res) => {
   }
 });
 
-export { getAllVideos, publishVideos, getVideoById, updateVideo };
+
+//Endpoint to delete video
+const deleteVideo = asyncHandler(async ( req, res)=>{
+  const {id : _id} = req.params;
+  
+  if(!_id){
+    throw new apiError(400,"Invalid Video Id or Missing");
+  }
+
+  try {
+    const video = await Video.findByIdAndDelete(_id);
+
+    if(!video){
+      throw new apiError(400,"Video not Found or already deleted");
+    }
+
+    return res
+    .status(200)
+    .json(new apiResponse(200,"Video Deleted Successfully"));
+
+  } catch (error) {
+    console.log("Error while deleting video",error);
+    throw new apiError(400, "Error while deleting video");
+  }
+});
+
+export { getAllVideos, publishVideos, getVideoById, updateVideo, deleteVideo };
