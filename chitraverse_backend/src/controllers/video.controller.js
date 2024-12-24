@@ -55,14 +55,15 @@ const getAllVideos = asyncHandler(async (req, res) => {
       },
       response: new apiResponse(200, videos, "Videos fetched successfully"),
     });
-  } catch {
+  } catch (error) {
+    console.log("Error", error);
     throw new apiError(400, "Error while fetching videos");
   }
 });
 
 //Endpoint to upload videos
 const publishVideos = asyncHandler(async (req, res) => {
-  const { title, description} = req.body;
+  const { title, description } = req.body;
 
   // Check title and description in request body
   if (!title || !description) {
@@ -78,7 +79,7 @@ const publishVideos = asyncHandler(async (req, res) => {
   }
 
   const duration = await getVideoDuration(videoFileLocalPath);
-  
+
   // Uploading VideoFile and Thumbnail in Cloudinary
   let videoFile;
 
@@ -109,9 +110,9 @@ const publishVideos = asyncHandler(async (req, res) => {
       thumbnail: thumbnail.url,
       title,
       description,
-      duration: duration/60,
+      duration: duration / 60,
       isPublished: true,
-      owner:req.user._id,
+      owner: req.user._id,
     });
 
     if (!video) {
@@ -127,4 +128,130 @@ const publishVideos = asyncHandler(async (req, res) => {
   }
 });
 
-export { getAllVideos, publishVideos };
+//Endpoint to fetch individual videos
+const getVideoById = asyncHandler(async (req, res) => {
+  const { id: _id } = req.params;
+
+  if (!_id) {
+    throw new apiError(400, "Invalid Video Id or Video Id is missing");
+  }
+
+  try {
+    const video = await Video.findById(_id);
+
+    if (!video) {
+      throw new apiError(404, "Find Not Found");
+    }
+
+    return res
+      .status(200)
+      .json(new apiResponse(200, video, "Video fetched successfully"));
+  } catch (error) {
+    console.log(400, "Error Fetching Video", error);
+    throw new apiError(400, "Error Fetching Video");
+  }
+});
+
+//Endpoint to update video details
+const updateVideo = asyncHandler(async (req, res) => {
+  const { id: _id } = req.params;
+
+  if (!_id) {
+    throw new apiError(400, "Video Id is invalid or missing");
+  }
+
+  const { title, description } = req.body;
+
+  if (!title || !description) {
+    throw new apiError(400, "All Fields are Required");
+  }
+
+  try {
+    const video = await Video.findByIdAndUpdate(
+      _id,
+      {
+        title,
+        description,
+      },
+      {
+        new: true,
+      }
+    );
+
+    if (!video) {
+      throw new apiError(404, "Error While Updating Video Details");
+    }
+
+    await video.save();
+
+    return res
+      .status(200)
+      .json(new apiResponse(200, video, "Video Details Updated Successfully"));
+  } catch (error) {
+    console.log("Error while Updating Video Details", error);
+    throw new apiError(400, "Error While Updating Video Details");
+  }
+});
+
+//Endpoint to delete video
+const deleteVideo = asyncHandler(async (req, res) => {
+  const { id: _id } = req.params;
+
+  if (!_id) {
+    throw new apiError(400, "Invalid Video Id or Missing");
+  }
+
+  try {
+    const video = await Video.findByIdAndDelete(_id);
+
+    if (!video) {
+      throw new apiError(400, "Video not Found or already deleted");
+    }
+
+    return res
+      .status(200)
+      .json(new apiResponse(200, "Video Deleted Successfully"));
+  } catch (error) {
+    console.log("Error while deleting video", error);
+    throw new apiError(400, "Error while deleting video");
+  }
+});
+
+//Endpoint to toogle publish status of video
+const tooglePublishStatus = asyncHandler(async (req, res) => {
+  const { id: _id } = req.params;
+
+  if (!_id) {
+    throw new apiError(400, "Invalid Video Id or Missing");
+  }
+
+  try {
+    const video = await Video.findById(_id);
+
+    if (!video) {
+      throw new apiError(404, "Video Not Found");
+    }
+
+    video.isPublished = !video.isPublished;
+    
+    await video.save();
+
+    return res
+      .status(200)
+      .json(
+        new apiResponse(200, video, "Video Publish Status Updated Successfully")
+      );
+  } catch (error) {
+    console.log("Error while updating publish status", error);
+    throw new apiError(400, "Error while updating publish status");
+  }
+});
+
+export {
+  getAllVideos,
+  publishVideos,
+  getVideoById,
+  updateVideo,
+  deleteVideo,
+  tooglePublishStatus,
+};
