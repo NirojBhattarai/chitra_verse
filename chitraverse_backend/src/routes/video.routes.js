@@ -5,6 +5,7 @@ import {
   getAllVideos,
   getVideoById,
   publishVideos,
+  updateVideo,
 } from "../controllers/video.controller.js";
 const router = Router();
 
@@ -24,6 +25,7 @@ router.route("/upload").post(
   verifyJWT,
   publishVideos
 );
-router.route("/view/:id").post(verifyJWT, getVideoById);
+router.route("/view/:id").post(verifyJWT, getVideoById); // Routes to view individual Video Using Video Id
+router.route("/update/:id").post(verifyJWT, updateVideo); // Routes to update individual videos using Video Id
 
 export default router;

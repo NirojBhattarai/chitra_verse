@@ -151,4 +151,44 @@ const getVideoById = asyncHandler(async (req, res) => {
   }
 });
 
-export { getAllVideos, publishVideos, getVideoById };
+const updateVideo = asyncHandler(async (req, res) => {
+  const { id: _id } = req.params;
+
+  if (!_id) {
+    throw new apiError(400, "Video Id is invalid or missing");
+  }
+
+  const { title, description } = req.body;
+
+  if (!title || !description) {
+    throw new apiError(400, "All Fields are Required");
+  }
+
+  try {
+    const video = await Video.findByIdAndUpdate(
+      _id,
+      {
+        title,
+        description,
+      },
+      {
+        new: true,
+      }
+    );
+
+    if (!video) {
+      throw new apiError(404, "Error While Updating Video Details");
+    }
+
+    video.save();
+
+    return res
+      .status(200)
+      .json(new apiResponse(200, video, "Video Details Updated Successfully"));
+  } catch (error) {
+    console.log("Error while Updating Video Details", error);
+    throw new apiError(400, "Error While Updating Video Details");
+  }
+});
+
+export { getAllVideos, publishVideos, getVideoById, updateVideo };
