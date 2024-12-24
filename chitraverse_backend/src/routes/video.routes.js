@@ -3,6 +3,7 @@ import {upload} from "../middlewares/multer.middlewares.js";
 import { verifyJWT } from "../middlewares/auth.middlewares.js";
 import {
   getAllVideos,
+  getVideoById,
   publishVideos,
 } from "../controllers/video.controller.js";
 const router = Router();
@@ -23,5 +24,6 @@ router.route("/upload").post(
   verifyJWT,
   publishVideos
 );
+router.route("/view/:id").post(verifyJWT, getVideoById);
 
 export default router;

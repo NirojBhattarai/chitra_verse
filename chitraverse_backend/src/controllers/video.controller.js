@@ -62,7 +62,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
 
 //Endpoint to upload videos
 const publishVideos = asyncHandler(async (req, res) => {
-  const { title, description} = req.body;
+  const { title, description } = req.body;
 
   // Check title and description in request body
   if (!title || !description) {
@@ -78,7 +78,7 @@ const publishVideos = asyncHandler(async (req, res) => {
   }
 
   const duration = await getVideoDuration(videoFileLocalPath);
-  
+
   // Uploading VideoFile and Thumbnail in Cloudinary
   let videoFile;
 
@@ -109,9 +109,9 @@ const publishVideos = asyncHandler(async (req, res) => {
       thumbnail: thumbnail.url,
       title,
       description,
-      duration: duration/60,
+      duration: duration / 60,
       isPublished: true,
-      owner:req.user._id,
+      owner: req.user._id,
     });
 
     if (!video) {
@@ -127,4 +127,28 @@ const publishVideos = asyncHandler(async (req, res) => {
   }
 });
 
-export { getAllVideos, publishVideos };
+//Endpoint to fetch individual videos
+const getVideoById = asyncHandler(async (req, res) => {
+  const { id: _id } = req.params;
+
+  if (!_id) {
+    throw new apiError(400, "Invalid Video Id or Video Id is missing");
+  }
+
+  try {
+    const video = await Video.findById(_id);
+
+    if (!video) {
+      throw new apiError(404, "Find Not Found");
+    }
+
+    return res
+      .status(200)
+      .json(new apiResponse(200, video, "Video fetched successfully"));
+  } catch (error) {
+    console.log(400, "Error Fetching Video", error);
+    throw new apiError(400, "Error Fetching Video");
+  }
+});
+
+export { getAllVideos, publishVideos, getVideoById };
