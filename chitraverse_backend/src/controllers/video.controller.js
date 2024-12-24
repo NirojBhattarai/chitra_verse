@@ -182,8 +182,6 @@ const updateVideo = asyncHandler(async (req, res) => {
       throw new apiError(404, "Error While Updating Video Details");
     }
 
-    await video.save();
-
     return res
       .status(200)
       .json(new apiResponse(200, video, "Video Details Updated Successfully"));
