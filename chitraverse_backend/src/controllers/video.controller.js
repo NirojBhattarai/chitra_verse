@@ -55,7 +55,8 @@ const getAllVideos = asyncHandler(async (req, res) => {
       },
       response: new apiResponse(200, videos, "Videos fetched successfully"),
     });
-  } catch {
+  } catch (error) {
+    console.log("Error", error);
     throw new apiError(400, "Error while fetching videos");
   }
 });
@@ -192,30 +193,65 @@ const updateVideo = asyncHandler(async (req, res) => {
   }
 });
 
-
 //Endpoint to delete video
-const deleteVideo = asyncHandler(async ( req, res)=>{
-  const {id : _id} = req.params;
-  
-  if(!_id){
-    throw new apiError(400,"Invalid Video Id or Missing");
+const deleteVideo = asyncHandler(async (req, res) => {
+  const { id: _id } = req.params;
+
+  if (!_id) {
+    throw new apiError(400, "Invalid Video Id or Missing");
   }
 
   try {
     const video = await Video.findByIdAndDelete(_id);
 
-    if(!video){
-      throw new apiError(400,"Video not Found or already deleted");
+    if (!video) {
+      throw new apiError(400, "Video not Found or already deleted");
     }
 
     return res
-    .status(200)
-    .json(new apiResponse(200,"Video Deleted Successfully"));
-
+      .status(200)
+      .json(new apiResponse(200, "Video Deleted Successfully"));
   } catch (error) {
-    console.log("Error while deleting video",error);
+    console.log("Error while deleting video", error);
     throw new apiError(400, "Error while deleting video");
   }
 });
 
-export { getAllVideos, publishVideos, getVideoById, updateVideo, deleteVideo };
+//Endpoint to toogle publish status of video
+const tooglePublishStatus = asyncHandler(async (req, res) => {
+  const { id: _id } = req.params;
+
+  if (!_id) {
+    throw new apiError(400, "Invalid Video Id or Missing");
+  }
+
+  try {
+    const video = await Video.findById(_id);
+
+    if (!video) {
+      throw new apiError(404, "Video Not Found");
+    }
+
+    video.isPublished = !video.isPublished;
+    
+    await video.save();
+
+    return res
+      .status(200)
+      .json(
+        new apiResponse(200, video, "Video Publish Status Updated Successfully")
+      );
+  } catch (error) {
+    console.log("Error while updating publish status", error);
+    throw new apiError(400, "Error while updating publish status");
+  }
+});
+
+export {
+  getAllVideos,
+  publishVideos,
+  getVideoById,
+  updateVideo,
+  deleteVideo,
+  tooglePublishStatus,
+};
