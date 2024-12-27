@@ -84,4 +84,42 @@ const toogleCommentLike = asyncHandler(async(req, res) =>{
   
 })
 
-export {toogleVideoLike, toogleCommentLike}
+const toogleTweetLike = asyncHandler(async(req, res) => {
+  const {id:tweetId} = req.params;
+
+  if(!tweetId){
+    throw new apiError(400, "Invalid Tweet Id");
+  }
+
+  const userId = req.user._id;
+
+  if(!userId){
+    throw new apiError(400, "Invalid or Missing User Id");
+  }
+
+  try {
+    const existingLike = await Like.find({tweet:tweetId, likedBy:userId});
+
+    if(existingLike){
+      await Like.findByIdAndDelete(existingLike._id);
+      throw new apiResponse(200, "Tweet Unliked Successfully");
+    }
+    else{
+      const newLike = await Like.create(
+        {
+          tweet:tweetId,
+          likedBy:userId
+        }
+      );
+
+      return res
+      .status(200)
+      .json(new apiResponse(200, newLike, "Tweet liked successfully"));
+    }
+  } catch (error) {
+    console.log("Error while Toogling Like in Tweets");
+    throw new apiError(400,"Something went wrong while Toogling like in Tweets");
+  }
+});
+
+export {toogleVideoLike, toogleCommentLike, toogleTweetLike}
