@@ -122,4 +122,26 @@ const toogleTweetLike = asyncHandler(async(req, res) => {
   }
 });
 
-export {toogleVideoLike, toogleCommentLike, toogleTweetLike}
+const getLikedVideos = asyncHandler(async(req, res) => {
+  const userId = req.user._id;
+
+  if(!userId){
+    throw new apiError(400, "Unauthorized User");
+  }
+  try {
+    const likedvideos = await Like.find({likedBy:userId});
+    
+    if(!likedvideos){
+      throw new apiError(404, "Video Not Found");
+    }
+
+    return res
+    .status(200)
+    .json(new apiResponse(200,likedvideos,"Liked Videos Fetched Successfully"));
+  } catch (error) {
+    console.log("Error while fetching liked videos",error);
+    throw new apiError(400,"Something went wrong while fetching liked videos");
+  }
+});
+
+export {toogleVideoLike, toogleCommentLike, toogleTweetLike, getLikedVideos}
