@@ -87,13 +87,13 @@ const getPlaylistById = asyncHandler(async (req, res) => {
 
 const addVideoToPlaylist = asyncHandler(async (req, res) => {
   const { id: playlistId } = req.params;
-  
+
   if (!playlistId) {
     throw new apiError(400, "Invalid or Missing PlaylistId");
   }
 
   const { videoId } = req.body;
- 
+
   if (!videoId) {
     throw new apiError(400, "Invalid or Missing VideoId");
   }
@@ -106,14 +106,14 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
 
     if (isVideoInPlaylist) {
       return res
-      .status(400)
-      .json(
-        new apiError(
-          400,
-          isVideoInPlaylist,
-          "Video already exists in the playlist"
-        )
-      );
+        .status(400)
+        .json(
+          new apiError(
+            400,
+            isVideoInPlaylist,
+            "Video already exists in the playlist"
+          )
+        );
     } else {
       const playlist = await Playlist.findByIdAndUpdate(
         playlistId,
@@ -150,4 +150,75 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
   }
 });
 
-export { createPlaylist, getUserPlaylist, getPlaylistById, addVideoToPlaylist };
+const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
+  const playlistId = req.params.id;
+
+  if (!playlistId) {
+    throw new apiError(400, "Invalid or Missing PlaylistId");
+  }
+
+  const { videoId } = req.body;
+
+  if (!videoId) {
+    throw new apiError(400, "Invalid or Missing VideoId");
+  }
+
+  const isVideoInPlaylist = await Playlist.findOne({
+    _id: playlistId,
+    videos: { $in: [videoId] },
+  });
+
+  if (!isVideoInPlaylist) {
+    return res
+      .status(400)
+      .json(
+        new apiError(
+          400,
+          isVideoInPlaylist,
+          "Video does not exists in the playlist"
+        )
+      );
+  } else {
+    try {
+      const playlist = await Playlist.findByIdAndUpdate(
+        playlistId,
+        {
+          $pull: {
+            videos: videoId,
+          },
+        },
+        {
+          new: true,
+        }
+      );
+
+      if (!playlist) {
+        throw new apiError(400, "Error while removing video from the playlist");
+      }
+
+      return res
+        .status(200)
+        .json(
+          new apiResponse(
+            200,
+            playlist,
+            "Video removed from the playlist successfully"
+          )
+        );
+    } catch (error) {
+      console.log("Error while removing video from the playlist");
+      throw new apiError(
+        400,
+        " Something went wrong while removing video from the playlist"
+      );
+    }
+  }
+});
+
+export {
+  createPlaylist,
+  getUserPlaylist,
+  getPlaylistById,
+  addVideoToPlaylist,
+  removeVideoFromPlaylist,
+};
