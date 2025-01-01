@@ -215,29 +215,68 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
   }
 });
 
-const deletePlaylist = asyncHandler(async(req, res) => {
-  const {id : _id} = req.params;
+const deletePlaylist = asyncHandler(async (req, res) => {
+  const { id: _id } = req.params;
 
-  if(!_id){
+  if (!_id) {
     throw new apiError(400, "Playlist Id is Invalid or Missing");
   }
 
   try {
     const playlist = await Playlist.findByIdAndDelete(_id);
-    
-    if(!playlist){
+
+    if (!playlist) {
       return res
         .status(400)
         .json(new apiError(400, null, "Playlist not found or already deleted"));
     }
 
-      return res
+    return res
       .status(200)
       .json(new apiResponse(200, null, "Playlist Deleted Successfully"));
-    
   } catch (error) {
     console.log("Error while deleting playlist");
     throw new apiError(400, "Something went wrong while deleting playlist");
+  }
+});
+
+const updatePlaylist = asyncHandler(async (req, res) => {
+  const { name, description } = req.body;
+
+  if (!name || !description) {
+    throw new apiError(400, "Name or Description is missing");
+  }
+
+  const { id: _id } = req.params;
+
+  if (!_id) {
+    throw new apiError(400, "Invalid or Missing Playlist Id");
+  }
+
+  try {
+    const playlist = await Playlist.findByIdAndUpdate(
+      _id,
+      {
+        name: name,
+        description: description,
+      },
+      {
+        new: true,
+      }
+    );
+ 
+    if (!playlist) {
+      return res
+        .status(400)
+        .json(new apiError(400, null, "Failed Updating Playlist"));
+    }
+
+    return res
+      .status(200)
+      .json(new apiResponse(200, playlist, "Playlist Updated Successfully"));
+  } catch (error) {
+    console.log("Error while updating playlist");
+    throw new apiError(400, "Something went wrong while updating playlist");
   }
 });
 
@@ -248,4 +287,5 @@ export {
   addVideoToPlaylist,
   removeVideoFromPlaylist,
   deletePlaylist,
+  updatePlaylist,
 };
