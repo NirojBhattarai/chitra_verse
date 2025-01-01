@@ -10,7 +10,7 @@ const toogleSubscription = asyncHandler(async (req, res) => {
     throw new apiError(400, "Channeld is missing or Invalid");
   }
 
-  const  userId  = req.user._id;
+  const userId = req.user._id;
 
   if (!userId) {
     throw new apiError(400, "Unauthorized User");
@@ -54,4 +54,29 @@ const toogleSubscription = asyncHandler(async (req, res) => {
   }
 });
 
-export {toogleSubscription}
+const getUserChannelSubscribers = asyncHandler(async (req, res) => {
+  const { id: channelId } = req.params;
+
+  if (!channelId) {
+    throw new apiError(400, "Invalid or Missing Channel Id");
+  }
+
+  try {
+    const subscribers = await Subscription.find({ channel: channelId });
+
+    if (!subscribers) {
+      throw new apiError(400, "No Subscribers Found");
+    }
+
+    return res
+      .status(200)
+      .json(
+        new apiResponse(200, subscribers, "Subscribers Fetched Successfully")
+      );
+  } catch (error) {
+    console.log("Error while fetching subscribers", error);
+    throw new apiError(400, "Something went wrong while fetching subscribers");
+  }
+});
+
+export { toogleSubscription, getUserChannelSubscribers };
