@@ -79,4 +79,36 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
   }
 });
 
-export { toogleSubscription, getUserChannelSubscribers };
+const getSubscribedChannels = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+
+  if (!userId) {
+    throw new apiError(400, "Unauthorized User");
+  }
+
+  try {
+    const subscribedChannels = await Subscription.find({ subscriber: userId });
+
+    if (!subscribedChannels) {
+      throw new apiError(400, "No Subscribed Channels Found");
+    }
+
+    return res
+      .status(200)
+      .json(
+        new apiResponse(
+          200,
+          subscribedChannels,
+          "Subscribed Channels Fetched Successfully"
+        )
+      );
+  } catch (error) {
+    console.log("Error while fetching subscribed channels", error);
+    throw new apiError(
+      400,
+      "Something went wrong while fetching subscribed channels"
+    );
+  }
+});
+
+export { toogleSubscription, getUserChannelSubscribers, getSubscribedChannels };
