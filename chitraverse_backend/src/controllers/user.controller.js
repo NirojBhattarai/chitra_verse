@@ -3,6 +3,8 @@ import { apiError } from "../utils/apiError.js";
 import { apiResponse } from "../utils/apiResponse.js";
 import { User } from "../models/user.models.js";
 import mongoose from "mongoose";
+import crypto from "crypto";
+import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
 import {
   deleteFromCloudinary,
@@ -40,12 +42,30 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new apiError(400, "All fields are required");
   }
 
+  // Email format validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    throw new apiError(400, "Invalid email format");
+  }
+
+  // Password strength validation
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*[\d\W])[A-Za-z\d\W]{8,}$/;
+  if (!passwordRegex.test(password)) {
+    throw new apiError(
+      400,
+      "Password must be at least 8 characters long and contain both letters and numbers"
+    );
+  }
+
   const existedUser = await User.findOne({
-    $or: [{ fullname }, { email }],
+    $or: [{ fullname }, { email }, { username }],
   });
 
   if (existedUser) {
-    throw new apiError(409, "User with email or username already exists");
+    throw new apiError(
+      400,
+      "User with the provided fullname, email, or username already exists"
+    );
   }
 
   //File Upload
@@ -171,7 +191,7 @@ const logoutUser = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(
     req.user._id,
     {
-      $unset: { refreshToken: 1},
+      $unset: { refreshToken: 1 },
     },
     {
       new: true,
@@ -388,7 +408,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
   const channel = await User.aggregate([
     {
       $match: {
-        username: username
+        username: username,
       },
     },
     {
@@ -450,57 +470,152 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
 });
 
 const getWatchHistory = asyncHandler(async (req, res) => {
-
-  const user = await User.aggregate(
-    [
-      {
-        $match:{
-          _id: new mongoose.Types.ObjectId(req.user?._id)
-        }
+  const user = await User.aggregate([
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(req.user?._id),
       },
-      {
-        $lookup:{
-          from:"videos",
-          localField:"watchHistory",
-          foreignField:"_id",
-          as:"watchHistory",
-          pipeline:[
-            {
-              $lookup:{
-                from:"users",
-                localField:"owner",
-                foreignField:"_id",
-                as:"owner",
-                pipeline:[
-                  {
-                    $project:{
-                      fullname:1,
-                      username:1,
-                      avatar:1
-                    }
-                  }
-                ]
-              }
+    },
+    {
+      $lookup: {
+        from: "videos",
+        localField: "watchHistory",
+        foreignField: "_id",
+        as: "watchHistory",
+        pipeline: [
+          {
+            $lookup: {
+              from: "users",
+              localField: "owner",
+              foreignField: "_id",
+              as: "owner",
+              pipeline: [
+                {
+                  $project: {
+                    fullname: 1,
+                    username: 1,
+                    avatar: 1,
+                  },
+                },
+              ],
             },
-            {
-              $addFields:{
-                owner:{
-                  $first:"$owner"
-                }
-              }
-            }
-          ]
-        }
-      }
-    ]);
+          },
+          {
+            $addFields: {
+              owner: {
+                $first: "$owner",
+              },
+            },
+          },
+        ],
+      },
+    },
+  ]);
 
-    if(!user.length){
-      throw new apiError(400,user[0]?.watchHistory,"Watch History Fetched Successfully");
-    }
+  if (!user.length) {
+    throw new apiError(
+      400,
+      user[0]?.watchHistory,
+      "Watch History Fetched Successfully"
+    );
+  }
+});
+
+const forgotPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    throw new apiError(400, "Email is required");
+  }
+
+  // Find user by email
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new apiError(404, "User not found");
+  }
+
+  // Generate reset token
+  const resetToken = crypto.randomBytes(32).toString("hex");
+  const resetTokenHash = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  // Set reset token and expiration
+  user.resetPasswordToken = resetTokenHash;
+  user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+  await user.save({ validateBeforeSave: false });
+
+  // Construct reset URL
+  const resetURL = `${process.env.FRONTEND_URL}/resetpassword/${resetToken}`;
+
+  // Configure Nodemailer
+  const transporter = nodemailer.createTransport({
+    service: "Gmail",
+    auth: {
+      user: process.env.EMAIL,
+      pass: process.env.EMAIL_PASSWORD,
+    },
+    tls: {
+      rejectUnauthorized: false,
+    },
+  });
+
+  // Send email
+  try {
+    await transporter.sendMail({
+      from: `"Support" <${process.env.EMAIL}>`,
+      to: user.email,
+      subject: "Password Reset Request",
+      text: `You requested a password reset. Click on the following link to reset your password: ${resetURL}. This link is valid for 1 hour.`,
+    });
+
+    res.status(200).json(new apiResponse(200, "Email sent successfully"));
+  } catch (error) {
+    console.error("Error sending email:", error.message);
+
+    // Reset token and expiration in case of error
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save({ validateBeforeSave: false });
+
+    throw new apiError(500, "Email could not be sent");
+  }
+});
+
+const resetPassword = asyncHandler(async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  if (!password) {
+    throw new apiError(400, "Password is required");
+  }
+
+  const resetTokenHash = crypto
+    .createHash("sha256")
+    .update(token)
+    .digest("hex");
+
+  const user = await User.findOne({
+    resetPasswordToken: resetTokenHash,
+    resetPasswordExpires: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    throw new apiError(400, "Invalid or expired token");
+  }
+
+  user.password = password;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpires = undefined;
+
+  await user.save();
+
+  res.status(200).json(new apiResponse(200, "Password reset successfully"));
 });
 
 export {
-  registerUser, 
+  registerUser,
   loginUser,
   refreshAccessToken,
   logoutUser,
@@ -510,5 +625,7 @@ export {
   updateAvatar,
   updateCoverImage,
   getUserChannelProfile,
-  getWatchHistory
+  getWatchHistory,
+  forgotPassword,
+  resetPassword,
 };
