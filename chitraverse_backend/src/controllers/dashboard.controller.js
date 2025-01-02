@@ -56,4 +56,29 @@ const getChannelStats = asyncHandler(async (req, res) => {
   }
 });
 
-export { getChannelStats };
+const getChannelVideos = asyncHandler(async (req, res) => {
+  const  channelId  = req.user._id;
+
+  if (!channelId) {
+    throw new apiError(400, "Invalid or Missing Channel Id");
+  }
+
+  try {
+    const channelvideos = await Video.find({
+      owner: channelId,
+    });
+
+    if(!channelvideos){
+      throw new apiError(400, "Video Not Found in Channel");
+    }
+
+    return res
+    .status(200)
+    .json(new apiResponse(200, channelvideos, "Channel Videos Fetched Successfully"));
+  } catch (error) {
+    console.log("Error while fetching channel videos");
+    throw new apiError(400, "Something went wrong while fetching channel videos");
+  }
+});
+
+export { getChannelStats, getChannelVideos };
