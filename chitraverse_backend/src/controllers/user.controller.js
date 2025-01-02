@@ -40,12 +40,24 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new apiError(400, "All fields are required");
   }
 
+  // Email format validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    throw new apiError(400, "Invalid email format");
+  }
+
+  // Password strength validation
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*[\d\W])[A-Za-z\d\W]{8,}$/;
+  if (!passwordRegex.test(password)) {
+    throw new apiError(400, "Password must be at least 8 characters long and contain both letters and numbers");
+  }
+
   const existedUser = await User.findOne({
-    $or: [{ fullname }, { email }],
+    $or: [{ fullname }, { email }, { username }],
   });
 
   if (existedUser) {
-    throw new apiError(409, "User with email or username already exists");
+    throw new apiError(400, "User with the provided fullname, email, or username already exists");
   }
 
   //File Upload
