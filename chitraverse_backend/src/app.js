@@ -11,11 +11,28 @@ import dashboardRouter from './routes/dashboard.routes.js';
 import cookieParser from 'cookie-parser';
 
 const app = express();
-app.use(cors({
-    origin: process.env.CORS_ORIGIN,
-    credentials:true
-}
-));
+const corsOptions = {
+    origin: function (origin, callback) {
+      const allowedOrigins = [
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "*",
+      ];
+      if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    optionsSuccessStatus: 200, // For legacy browser support
+    credentials: true,
+  };
+
+  app.use(cors(corsOptions));
+  app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Credentials', 'true');
+    next();
+  });
 
 //middlewares
 app.use(express.json({limit:"16kb"}));
