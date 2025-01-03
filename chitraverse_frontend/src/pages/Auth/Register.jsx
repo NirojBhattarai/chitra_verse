@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { registerUser } from "../../api/auth.js";
 
 const Register = () => {
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     fullname: "",
-    avatar: "",
-    coverImage: "",
+    avatar: null,
+    coverImage: null,
     password: "",
   });
 
@@ -15,53 +16,117 @@ const Register = () => {
 
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  const handleInputChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleFileChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.files[0] });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(formData);
+    const newFormData = new FormData();
+    Object.entries(formData).forEach(([key, value]) => {
+      newFormData.append(key, value);
+    });
+
     try {
-      await registerUser(formData);
-      navigate('/login'); // Redirect to login page after successful registration
+      await registerUser(newFormData);
+      navigate("/login");
     } catch (err) {
-      setError(err.response.data.message || 'Something went wrong');
+      setError(err.response.data.message || "Something went wrong");
     }
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-500">
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-6 rounded shadow-md w-80"
+        encType="multipart/form-data"
+        className="bg-white p-4 rounded-lg shadow-lg w-full max-w-md"
       >
-        <h2 className="text-2xl font-bold mb-4">Register</h2>
-        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-        <input
-          type="text"
-          name="name"
-          placeholder="Name"
-          className="w-full mb-3 p-2 border rounded"
-          onChange={handleChange}
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          className="w-full mb-3 p-2 border rounded"
-          onChange={handleChange}
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          className="w-full mb-3 p-2 border rounded"
-          onChange={handleChange}
-        />
+        <h2 className="text-2xl text-center text-red-600 font-bold mb-4">
+          Create Your Account
+        </h2>
+        {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
+
+        <div className="mb-2">
+          <label className="text-red-600 text-sm p-1 font-bold">
+            User Name:
+          </label>
+          <input
+            type="text"
+            name="username"
+            placeholder="User Name"
+            className="w-full p-1 border rounded"
+            onChange={handleInputChange}
+          />
+        </div>
+
+        <div className="mb-2">
+          <label className="text-red-600 text-sm p-1 font-bold">
+            Full Name:
+          </label>
+          <input
+            type="text"
+            name="fullname"
+            placeholder="Full Name"
+            className="w-full p-1 border rounded"
+            onChange={handleInputChange}
+          />
+        </div>
+
+        <div className="mb-2">
+          <label className="text-red-600 text-sm p-1 font-bold">Email:</label>
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            className="w-full p-1 border rounded"
+            onChange={handleInputChange}
+          />
+        </div>
+
+        <div className="mb-2">
+          <label className="text-red-600 text-sm p-1 font-bold">Avatar:</label>
+          <input
+            type="file"
+            name="avatar"
+            className="w-full p-1 border rounded"
+            onChange={handleFileChange}
+          />
+        </div>
+
+        <div className="mb-2">
+          <label className="text-red-600 text-sm p-1 font-bold">
+            Cover Image:
+          </label>
+          <input
+            type="file"
+            name="coverImage"
+            className="w-full p-1 border rounded"
+            onChange={handleFileChange}
+          />
+        </div>
+
+        <div className="mb-2">
+          <label className="text-red-600 text-sm p-1 font-bold">
+            Password:
+          </label>
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            className="w-full p-1 border rounded"
+            onChange={handleInputChange}
+          />
+        </div>
+
         <button
           type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded w-full"
+          className="bg-blue-500 text-white px-2 py-1 rounded w-full"
         >
           Register
         </button>
