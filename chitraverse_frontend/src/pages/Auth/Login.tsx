@@ -1,4 +1,4 @@
-import React, {useState}from "react";
+import {useState} from "react";
 import { loginUser } from "../../api/auth";
 
 const Login = () => {
@@ -8,19 +8,20 @@ const Login = () => {
     password: "",
   });
 
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<String|null>(null);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       try {
         await loginUser(formData);
         console.log("Login")
       } catch (err) {
-        setError(err.response.data.message || "Something went wrong");
+        const error = err as { response: { data: { message: string } } };
+        setError(error.response.data.message || "Something went wrong");
       }
     };
 
@@ -62,7 +63,7 @@ const Login = () => {
 
         <button
           type="submit"
-          className="bg-blue-500 text-white px-2 py-1 rounded w-full"
+          className="bg-red-500 text-white px-2 py-1 rounded w-full"
         >
           Login
         </button>

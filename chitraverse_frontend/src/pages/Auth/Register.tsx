@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router";
 import { registerUser } from "../../api/auth.js";
 
 const Register = () => {
@@ -12,31 +12,36 @@ const Register = () => {
     password: "",
   });
 
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<String | null>(null);
 
   const navigate = useNavigate();
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleFileChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.files[0] });
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFormData({ ...formData, [e.target.name]: e.target.files[0] });
+    }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(formData);
     const newFormData = new FormData();
     Object.entries(formData).forEach(([key, value]) => {
-      newFormData.append(key, value);
+      if (value !== null) {
+        newFormData.append(key, value);
+      }
     });
 
     try {
       await registerUser(newFormData);
       navigate("/login");
     } catch (err) {
-      setError(err.response.data.message || "Something went wrong");
+      const error = err as { response: { data: { message: string } } };
+      setError(error.response.data.message || "Something went wrong");
     }
   };
 
@@ -126,7 +131,7 @@ const Register = () => {
 
         <button
           type="submit"
-          className="bg-blue-500 text-white px-2 py-1 rounded w-full"
+          className="bg-red-500 text-white px-2 py-1 rounded w-full"
         >
           Register
         </button>
