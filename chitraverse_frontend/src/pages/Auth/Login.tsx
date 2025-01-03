@@ -1,12 +1,22 @@
 import {useState} from "react";
 import { loginUser } from "../../api/auth";
+import { useNavigate } from "react-router";
+import { useAuth } from "../../context/AuthContext";
 
 const Login = () => {
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
+    username: "",
+    fullname: "",
+    avatar: "",
+    coverImage: ""
   });
+
+  const {login} = useAuth();
+
+  const navigate = useNavigate();
 
   const [error, setError] = useState<String|null>(null);
 
@@ -18,7 +28,8 @@ const Login = () => {
       e.preventDefault();
       try {
         await loginUser(formData);
-        console.log("Login")
+        login(formData);
+        navigate("/dashboard");
       } catch (err) {
         const error = err as { response: { data: { message: string } } };
         setError(error.response.data.message || "Something went wrong");
