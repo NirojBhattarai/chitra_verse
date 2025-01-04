@@ -29,7 +29,7 @@ const Login = () => {
       try {
         await loginUser(formData);
         login(formData);
-        navigate("/dashboard");
+        navigate("/");
       } catch (err) {
         const error = err as { response: { data: { message: string } } };
         setError(error.response.data.message || "Something went wrong");

@@ -1,13 +1,13 @@
 import { createBrowserRouter, RouteObject } from "react-router";
 import Login from "../pages/Auth/Login";
 import Register from "../pages/Auth/Register";
-import ProtectedRoutes from "./protectedRoutes";
 import DashboardLayout from "../layout/DashboardLayout";
-import Dashboard from "../pages/Dashboard/Dashboard";
+import Home from "../pages/Home/Home";
+
 
 export const routes: RouteObject[] = [
   {
-    path: "/",
+    path: "/login",
     element: <Login />,
   },
   {
@@ -16,16 +16,14 @@ export const routes: RouteObject[] = [
   },
   {
     element: (
-      <ProtectedRoutes>
         <DashboardLayout />
-      </ProtectedRoutes>
     ),
-    children:[
-        {
-            path:'/dashboard',
-            element:<Dashboard/>
-        }
-    ]
+    children: [
+      {
+        path: "/",
+        element: <Home />,
+      },
+    ],
   },
 ];
 
