@@ -16,3 +16,12 @@ export interface IuserDataResponse {
     password:String
 }
 
+
+export interface SideBarProps {
+
+    isSidebarOpen: boolean;
+  
+    toggleSidebar: () => void;
+  
+  }
+  
