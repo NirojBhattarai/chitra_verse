@@ -4,10 +4,11 @@ import Register from "../pages/Auth/Register";
 import DashboardLayout from "../layout/DashboardLayout";
 import Home from "../pages/Home/Home";
 
+
 export const routes: RouteObject[] = [
   {
-    path:"/login",
-    element: <Login/>
+    path: "/login",
+    element: <Login />,
   },
   {
     path: "/register",
@@ -17,12 +18,12 @@ export const routes: RouteObject[] = [
     element: (
         <DashboardLayout />
     ),
-    children:[
-        {
-            path:'/',
-            element:<Home/>
-        }
-    ]
+    children: [
+      {
+        path: "/",
+        element: <Home />,
+      },
+    ],
   },
 ];
 

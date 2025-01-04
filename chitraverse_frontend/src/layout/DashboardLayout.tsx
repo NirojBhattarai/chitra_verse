@@ -30,24 +30,25 @@ const DashboardLayout = () => {
   }, [isSidebarOpen]);
 
   return (
-    <div className="flex min-h-screen">
-      <div
-        className={`${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } fixed inset-0 bg-black opacity-50 sm:hidden z-30 transition-all duration-300`}
-        onClick={toggleSidebar}
-      ></div>
+    <div className="flex min-h-screen bg-gray-100">
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black opacity-50 sm:hidden z-30 transition-all duration-300"
+          onClick={toggleSidebar}
+        ></div>
+      )}
 
       <div
-        className={`h-screen fixed lg:static top-0 left-0 z-40 w-64 transition-transform ${
+        className={`h-screen fixed lg:static top-0 left-0 z-40 w-64 transition-transform bg-gradient-to-t from-gray-50 via-gray-100 to-gray-200 shadow-lg ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } sm:translate-x-0 bg-gradient-to-t from-gray-50 via-gray-100 to-gray-200`}
+        } sm:translate-x-0`}
+        id="default-sidebar"
       >
         <SideBar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
       </div>
 
       <div
-        className={`w-full sm:ml-64 transition-all duration-300 ${
+        className={`flex-1 transition-all duration-300 ${
           isSidebarOpen ? "ml-64" : ""
         }`}
       >
@@ -59,7 +60,8 @@ const DashboardLayout = () => {
           <span className="sr-only">Open sidebar</span>
           <FaBars className="w-6 h-6" />
         </button>
-        <div className="p-4">
+
+        <div className=" bg-gray-100 rounded-lg shadow-lg h-screen w-full">
           <Outlet />
         </div>
       </div>

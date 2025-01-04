@@ -1,27 +1,49 @@
 export interface IuserData {
-    username:String,
-    fullname:String,
-    email:String,
-    avatar:File,
-    coverImage:File,
-    password:String
+  username: string;
+  fullname: string;
+  email: string;
+  avatar: string;
+  coverImage: string;
+  password: string;
 }
 
 export interface IuserDataResponse {
-    username:String,
-    fullname:String,
-    email:String,
-    avatar:String,
-    coverImage:String,
-    password:String
+  username: string;
+  fullname: string;
+  email: string;
+  avatar: string;
+  coverImage: string;
+  password: string;
 }
 
-
 export interface SideBarProps {
+  isSidebarOpen: boolean;
 
-    isSidebarOpen: boolean;
-  
-    toggleSidebar: () => void;
-  
-  }
-  
+  toggleSidebar: () => void;
+}
+
+export interface IVideo {
+  _id: string;
+  url:string;
+  videoFile: string;
+  thumbnail: string;
+  title: string;
+  description: string;
+  views: number;
+  duration: number;
+  isPublished: boolean;
+  owner: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface IVideo {
+  _id: string;
+  thumbnail: string;
+  title: string;
+  description: string;
+  views: number;
+  duration: number;
+  createdAt: string;
+  videoFile: string;
+}
