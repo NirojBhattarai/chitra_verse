@@ -14,7 +14,7 @@ const Login = () => {
     coverImage: ""
   });
 
-  const {login} = useAuth();
+  const {login, fetchUser} = useAuth();
 
   const navigate = useNavigate();
 
@@ -29,7 +29,8 @@ const Login = () => {
       try {
         await loginUser(formData);
         login(formData);
-        navigate("/");
+        fetchUser();
+        navigate("/home");
       } catch (err) {
         const error = err as { response: { data: { message: string } } };
         setError(error.response.data.message || "Something went wrong");
