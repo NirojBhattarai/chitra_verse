@@ -3,11 +3,11 @@ import Login from "../pages/Auth/Login";
 import Register from "../pages/Auth/Register";
 import DashboardLayout from "../layout/DashboardLayout";
 import Home from "../pages/Home/Home";
-
+import ProtectedRoutes from "./protectedRoutes";
 
 export const routes: RouteObject[] = [
   {
-    path: "/login",
+    path: "/",
     element: <Login />,
   },
   {
@@ -16,11 +16,13 @@ export const routes: RouteObject[] = [
   },
   {
     element: (
+      <ProtectedRoutes>
         <DashboardLayout />
+      </ProtectedRoutes>
     ),
     children: [
       {
-        path: "/",
+        path: "/home",
         element: <Home />,
       },
     ],

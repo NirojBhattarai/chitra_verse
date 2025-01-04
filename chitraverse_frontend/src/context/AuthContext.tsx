@@ -6,52 +6,59 @@ const AuthContext = createContext<{
   user: IuserDataResponse | null;
   login: (userData: IuserDataResponse) => void;
   logout: () => void;
-}>( {
+  loading: boolean;
+  fetchUser: () => void;
+}>({
   user: null,
   login: () => {},
   logout: () => {},
+  loading: true,
+  fetchUser: () => {},
 });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<IuserDataResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
-  const login = (userData: IuserDataResponse) => setUser(userData);
+  const login = (userData: IuserDataResponse) => {
+    setUser(userData);
+    setLoading(false); 
+  };
 
+  
   const logout = () => {
     setUser(null);
+    setLoading(false);
+  };
+
+ 
+  const fetchUser = async () => {
+    setLoading(true); 
+    try {
+      const response = await fetchAuthenticatedUser();
+      setUser(response.data);
+    } catch (error) {
+      console.error("Authentication error:", error);
+      try {
+        await refreshAccessToken();
+        const response = await fetchAuthenticatedUser();
+        setUser(response.data);
+      } catch (refreshError) {
+        console.error("Token refresh failed:", refreshError);
+        logout(); 
+      }
+    } finally {
+      setLoading(false); 
+    }
   };
 
   useEffect(() => {
-    const initializeAuth = async () => {
-      try {
-        const response = await fetchAuthenticatedUser();
-        setUser(response.data);
-      } catch (error) {
-        console.error("Authentication error:", error);
-        try {
-          await refreshAccessToken();
-          const response = await fetchAuthenticatedUser();
-          setUser(response.data);
-        } catch (refreshError) {
-          console.error("Token refresh failed:", refreshError);
-          logout();
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    initializeAuth();
+    fetchUser();
   }, []);
 
-  if (loading) {
-    return <div>Loading...</div>; // Add a loader here if needed
-  }
-
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
-      {children}
+    <AuthContext.Provider value={{ user, login, logout, loading, fetchUser }}>
+      {!loading ? children : <div>Loading...</div>}
     </AuthContext.Provider>
   );
 };
