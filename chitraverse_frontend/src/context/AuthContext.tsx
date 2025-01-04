@@ -1,13 +1,12 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { IuserDataResponse } from "../interfaces/interface";
 import { fetchAuthenticatedUser, refreshAccessToken } from "../api/auth";
-import { ReactNode } from "react";
 
 const AuthContext = createContext<{
   user: IuserDataResponse | null;
   login: (userData: IuserDataResponse) => void;
   logout: () => void;
-}>({
+}>( {
   user: null,
   login: () => {},
   logout: () => {},
@@ -26,14 +25,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        const user = await fetchAuthenticatedUser(); 
-        setUser(user);
+        const response = await fetchAuthenticatedUser();
+        setUser(response.data);
       } catch (error) {
         console.error("Authentication error:", error);
         try {
           await refreshAccessToken();
-          const user = await fetchAuthenticatedUser();
-          setUser(user);
+          const response = await fetchAuthenticatedUser();
+          setUser(response.data);
         } catch (refreshError) {
           console.error("Token refresh failed:", refreshError);
           logout();
