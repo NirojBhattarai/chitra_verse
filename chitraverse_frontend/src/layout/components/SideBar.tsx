@@ -27,7 +27,7 @@ const SideBar = ({ isSidebarOpen }: SideBarProps) => {
         <ul className="space-y-2 font-medium">
           <li>
             <a
-              href="/"
+              href="/home"
               className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-purple-200 group"
             >
               <FaHome className="w-5 h-5 text-purple-600 transition duration-75 group-hover:text-purple-800" />
@@ -114,7 +114,22 @@ const SideBar = ({ isSidebarOpen }: SideBarProps) => {
 
           <li className="pt-12 lg:pt-20">
             <button
-              onClick={() => {}}
+              onClick={() => {
+                fetch("http://localhost:5000/api/v1/users/logout", {
+                  method: "POST",
+                  credentials: "include",
+                })
+                  .then((response) => {
+                    if (response.ok) {
+                      window.location.href = "/";
+                    } else {
+                      console.error("Logout failed");
+                    }
+                  })
+                  .catch((error) => {
+                    console.error("Error:", error);
+                  });
+              }}
               className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-red-200 group w-full"
             >
               <FaSignOutAlt className="w-5 h-5 text-red-600 transition duration-75 group-hover:text-red-800" />

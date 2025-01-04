@@ -1,9 +1,20 @@
+import { useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useVideo } from "../../context/VideoContext";
 
 const Home = () => {
-  const { videos } = useVideo();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
+  const { videos, loading, fetchVideos } = useVideo();
+  
+  useEffect(() => {
+    if (user) {
+      fetchVideos();
+    }
+  }, [user]);
+
+  if (authLoading || loading || !videos) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="container mx-auto px-4 py-6">
@@ -20,7 +31,6 @@ const Home = () => {
                   alt={video.title}
                   className="w-full h-36 object-cover group-hover:opacity-75 transition-opacity duration-300"
                 />
-
                 <div className="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-3 py-1 rounded">
                   {Math.floor(video.duration)}:
                   {Math.floor(video.duration % 60)
@@ -30,20 +40,24 @@ const Home = () => {
               </div>
 
               <div className="p-4">
-                
                 <div className="flex items-center mb-1">
                   <img
-                    src={user?.avatar || "/default-avatar.png"} 
+                    src={user?.avatar || "/default-avatar.png"}
                     alt="Avatar"
                     className="w-8 h-8 rounded-full mr-2"
                   />
-                  <span className="text-sm text-gray-600">{user?.fullname || "Anonymous"}</span>
+                  <span className="text-sm text-gray-600">
+                    {user?.fullname || "Anonymous"}
+                  </span>
                 </div>
 
-                
-                <h3 className="text-lg font-semibold text-gray-800 truncate">{video.title}</h3>
+                <h3 className="text-lg font-semibold text-gray-800 truncate">
+                  {video.title}
+                </h3>
 
-                <p className="text-sm text-gray-500 mt-1">{video.views} views</p>
+                <p className="text-sm text-gray-500 mt-1">
+                  {video.views} views
+                </p>
               </div>
             </div>
           ))}
