@@ -15,26 +15,26 @@ export const loginUser = async (credentials: {
   password: String;
 }) => {
   const response = await axios.post(
-    "http://localhost:5001/api/v1/users/login",
+    "http://localhost:5000/api/v1/users/login",
     credentials
   );
   return response.data;
 };
 
 export const fetchAuthenticatedUser = async () => {
-  const response = await axios.post("http://localhost:5001/api/v1/users/viewuser");
+  const response = await axios.post("http://localhost:5000/api/v1/users/viewuser");
   return response.data;
 };
 
 export const refreshAccessToken = async () => {
   const response = await axios.post(
-    "http://localhost:5001/api/v1/users/refreshToken"
+    "http://localhost:5000/api/v1/users/refreshToken"
   );
   return response.data;
 };
 
 
 export const fetchVideos = async () => {
-  const response = await axios.post('http://localhost:5001/api/v1/videos/view'); 
+  const response = await axios.post('http://localhost:5000/api/v1/videos/view'); 
   return response.data.response.data; 
 };

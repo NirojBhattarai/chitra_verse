@@ -2,6 +2,7 @@ import { Outlet } from "react-router";
 import SideBar from "../layout/components/SideBar";
 import { useState, useEffect } from "react";
 import { FaBars } from "react-icons/fa";
+import Header from "./components/Header";
 
 const DashboardLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -30,7 +31,7 @@ const DashboardLayout = () => {
   }, [isSidebarOpen]);
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex min-h-screen bg-gray-200">
       {isSidebarOpen && (
         <div
           className="fixed inset-0 bg-black opacity-50 sm:hidden z-30 transition-all duration-300"
@@ -39,7 +40,7 @@ const DashboardLayout = () => {
       )}
 
       <div
-        className={`h-screen fixed lg:static top-0 left-0 z-40 w-64 transition-transform bg-gradient-to-t from-gray-50 via-gray-100 to-gray-200 shadow-lg ${
+        className={`h-screen fixed lg:fixed top-0 left-0 z-40 w-64 transition-transform bg-gray-200 shadow-lg ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         } sm:translate-x-0`}
         id="default-sidebar"
@@ -49,19 +50,20 @@ const DashboardLayout = () => {
 
       <div
         className={`flex-1 transition-all duration-300 ${
-          isSidebarOpen ? "ml-64" : ""
-        }`}
+          isSidebarOpen ? "" : ""
+        } flex flex-col`}
       >
         <button
           type="button"
           onClick={toggleSidebar}
-          className="inline-flex items-center p-2 mt-2 ml-3 text-sm text-gray-800 rounded-lg sm:hidden hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-400"
+          className="inline-flex items-center z-40 p-2 mt-4 ml-3 text-sm text-gray-800 rounded-lg sm:hidden "
         >
-          <span className="sr-only">Open sidebar</span>
           <FaBars className="w-6 h-6" />
         </button>
-
-        <div className=" bg-gray-100 rounded-lg shadow-lg h-screen w-full">
+        <div className="fixed top-0 right-0 w-full bg-gray-200 z-30">
+          <Header />
+        </div>
+        <div className="flex-1 lg:ml-64 overflow-y-auto bg-gray-200 rounded-lg shadow-lg pt-20">
           <Outlet />
         </div>
       </div>
