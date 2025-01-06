@@ -8,7 +8,7 @@ import {
   FaSignOutAlt,
 } from "react-icons/fa";
 import { MdSubscriptions } from "react-icons/md";
-
+import { Link } from "react-router";
 import { SideBarProps } from "../../interfaces/interface";
 
 const SideBar = ({ isSidebarOpen }: SideBarProps) => {
@@ -27,90 +27,90 @@ const SideBar = ({ isSidebarOpen }: SideBarProps) => {
 
         <ul className="space-y-2 font-medium">
           <li>
-            <a
-              href="/home"
+            <Link
+              to="/home"
               className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-purple-200 group"
             >
               <FaHome className="w-5 h-5 text-red-600 transition duration-75 group-hover:text-red-900" />
               <span className="ml-3 font-bold text-lg text-gray-800">Home</span>
-            </a>
+            </Link>
           </li>
           <li>
-            <a
-              href="/subscriptions"
+            <Link
+              to="/subscriptions"
               className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-purple-200 group"
             >
               <MdSubscriptions className="w-5 h-5 text-red-600 transition duration-75 group-hover:text-red-900" />
               <span className="ml-3 font-bold text-lg text-gray-800">
                 Subscriptions
               </span>
-            </a>
+            </Link>
           </li>
           <li>
-            <a
-              href="/user-profile"
+            <Link
+              to="/profile"
               className="flex items-center w-full p-3 text-black bg-slate-50 hover:bg-purple-200 rounded-md transition duration-10 shadow-md group"
             >
               <FaUser className="w-5 h-5 mx-2 text-red-600 transition duration-75 group-hover:text-red-900" />
               <span className="text-center font-bold text-lg group-hover:scale-105 transform transition duration-10">
                 User Profile
               </span>
-            </a>
+            </Link>
           </li>
           <li>
-            <a
-              href="/playlist"
+            <Link
+              to="/playlist"
               className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-purple-200 group"
             >
               <FaList className="w-5 h-5 text-red-600 transition duration-75 group-hover:text-red-900" />
               <span className="ml-3 font-bold text-lg text-gray-800">
                 Playlist
               </span>
-            </a>
+            </Link>
           </li>
           <li>
-            <a
-              href="/videos"
+            <Link
+              to="/videos"
               className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-purple-200 group"
             >
               <FaVideo className="w-5 h-5 text-red-600 transition duration-75 group-hover:text-red-900" />
               <span className="ml-3 font-bold text-lg text-gray-800">
                 Videos
               </span>
-            </a>
+            </Link>
           </li>
           <li>
-            <a
-              href="/liked-videos"
+            <Link
+              to="/liked-videos"
               className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-purple-200 group"
             >
               <FaHeart className="w-5 h-5 text-red-600 transition duration-75 group-hover:text-red-900" />
               <span className="ml-3 font-bold text-lg text-gray-800">
                 Liked Videos
               </span>
-            </a>
+            </Link>
           </li>
           <li>
-            <a
-              href="/tweets"
+            <Link
+              to="/tweets"
               className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-purple-200 group"
             >
               <FaTwitter className="w-5 h-5 text-red-600 transition duration-75 group-hover:text-red-900" />
               <span className="ml-3 font-bold text-lg text-gray-800">
                 Tweets
               </span>
-            </a>
+            </Link>
           </li>
           <li>
-            <a
-              href="/liked-tweets"
+            <Link
+              to="/liked-tweets"
               className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-purple-200 group"
             >
               <FaHeart className="w-5 h-5 text-red-600 transition duration-75 group-hover:text-red-900" />
               <span className="ml-3 font-bold text-lg text-gray-800">
                 Liked Tweets
               </span>
-            </a>
+            </Link>
           </li>
 
           <li className="pt-12 lg:pt-20">
