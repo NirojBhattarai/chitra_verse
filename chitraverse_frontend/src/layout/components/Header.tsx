@@ -1,8 +1,15 @@
-import { FaSearch, FaBell, FaUserCircle } from "react-icons/fa";
+import { FaSearch, FaBell} from "react-icons/fa";
+import { useAuth } from "../../context/AuthContext";
 
 const Header = () => {
+
+  const { user, loading: authLoading } = useAuth();
+  if (authLoading) {
+      return <div>Loading...</div>;
+    }
+  
   return (
-    <header className="bg-gray-200 text-gray-900 ">
+    <header className=" text-gray-900 ">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-end items-center py-4">
           {/* Search Bar (Hidden on Small Devices) */}
@@ -22,9 +29,7 @@ const Header = () => {
             <button className="relative">
               <FaBell className="w-8 h-6 text-red-600 hover:text-red-900" />
             </button>
-            <button>
-              <FaUserCircle className="w-8 h-8 text-red-600 hover:text-red-900" />
-            </button>
+            {user && <img src={user.avatar} alt="Avatar" className="w-8 h-8 rounded-full" />}
           </div>
         </div>
 
