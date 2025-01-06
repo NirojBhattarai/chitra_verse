@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, ReactNode } from "react";
-import { fetchVideos as fetchVideosApi } from "../api/auth";
+import { fetchVideos as fetchVideosApi } from "../api/video";
 import { IVideo } from "../interfaces/interface";
 
 const VideoContext = createContext<{
