@@ -3,7 +3,9 @@ import Login from "../pages/Auth/Login";
 import Register from "../pages/Auth/Register";
 import DashboardLayout from "../layout/DashboardLayout";
 import Home from "../pages/Home/Home";
+import Profile from "../pages/Profile/Profile"
 import ProtectedRoutes from "./protectedRoutes";
+import Playlist from "../pages/Profile/components/Playlist";
 
 export const routes: RouteObject[] = [
   {
@@ -25,6 +27,14 @@ export const routes: RouteObject[] = [
         path: "/home",
         element: <Home />,
       },
+      {
+        path:"/profile",
+        element:<Profile/>
+      },
+      {
+        path:"/playlist",
+        element:<Playlist/>
+      }
     ],
   },
 ];
