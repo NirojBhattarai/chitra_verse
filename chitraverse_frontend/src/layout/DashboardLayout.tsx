@@ -39,8 +39,9 @@ const DashboardLayout = () => {
         ></div>
       )}
 
+      {/* Sidebar */}
       <div
-        className={`h-screen fixed lg:fixed top-0 left-0 z-40 w-64 transition-transform bg-gray-200 shadow-lg ${
+        className={`h-full fixed top-0 left-0 z-40 w-64 transition-transform bg-gray-200  ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         } sm:translate-x-0`}
         id="default-sidebar"
@@ -48,22 +49,29 @@ const DashboardLayout = () => {
         <SideBar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
       </div>
 
-      <div
-        className={`flex-1 transition-all duration-300 ${
-          isSidebarOpen ? "" : ""
-        } flex flex-col`}
-      >
-        <button
-          type="button"
-          onClick={toggleSidebar}
-          className="inline-flex items-center z-40 p-2 mt-4 ml-3 text-sm text-gray-800 rounded-lg sm:hidden "
-        >
-          <FaBars className="w-6 h-6" />
-        </button>
-        <div className="fixed top-0 right-0 w-full bg-gray-200 z-30">
-          <Header />
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col min-h-screen bg-gray-200">
+        {/* Header */}
+        <div className="fixed top-0 right-0 z-30 w-full bg-gray-200 text-white ">
+          <div className="flex flex-row items-center justify-between p-4">
+            {/* Sidebar Toggle Button */}
+            <button
+              type="button"
+              onClick={toggleSidebar}
+              className="text-red-600 hover:text-red-900 focus:outline-none sm:hidden"
+            >
+              <FaBars className="mt-16 w-6 h-6" />
+            </button>
+
+            {/* Header Content */}
+            <div className="flex-1 flex justify-center sm:justify-end items-center">
+              <Header />
+            </div>
+          </div>
         </div>
-        <div className="flex-1 lg:ml-64 overflow-y-auto bg-gray-200 rounded-lg shadow-lg pt-20">
+
+        {/* Content Area */}
+        <div className="bg-white flex-1 pt-16 lg:ml-64 md:ml-64 overflow-y-auto">
           <Outlet />
         </div>
       </div>

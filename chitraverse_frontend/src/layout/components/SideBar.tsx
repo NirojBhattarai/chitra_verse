@@ -19,7 +19,7 @@ const SideBar = ({ isSidebarOpen }: SideBarProps) => {
       } sm:translate-x-0 transition-all ease-in-out duration-300 bg-gray-200 w-64`}
     >
       <div className="h-full px-3 py-4 overflow-y-auto">
-        <h1 className="text-transparent pl-4 text-green-900 font-extrabold text-center text-3xl sm:text-3xl md:text-3xl mb-4 flex items-center justify-center space-x-2">
+        <h1 className="text-transparent pl-4 text-blue-900 font-extrabold text-center text-3xl sm:text-3xl md:text-3xl mb-4 flex items-center justify-center space-x-2">
           <span>
             Chitra<span className="text-red-700">Verse</span>
           </span>
