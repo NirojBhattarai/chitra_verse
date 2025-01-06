@@ -1,12 +1,3 @@
-export interface IuserData {
-  username: string;
-  fullname: string;
-  email: string;
-  avatar: string;
-  coverImage: string;
-  password: string;
-}
-
 export interface IuserDataResponse {
   username: string;
   fullname: string;
@@ -37,13 +28,12 @@ export interface IVideo {
   updatedAt: string;
 }
 
-export interface IVideo {
+export interface IPlaylist{
   _id: string;
-  thumbnail: string;
-  title: string;
+  name: string;
   description: string;
-  views: number;
-  duration: number;
+  videos: string[];
+  owner: string;
   createdAt: string;
-  videoFile: string;
+  updatedAt: string;
 }
