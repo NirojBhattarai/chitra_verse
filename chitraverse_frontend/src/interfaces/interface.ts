@@ -37,3 +37,12 @@ export interface IPlaylist{
   createdAt: string;
   updatedAt: string;
 }
+
+export interface IComment{
+  _id: string;
+  content:string;
+  video:string[];
+  owner:string;
+  createdAt:string;
+  updatedAt:string;
+}
