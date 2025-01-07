@@ -41,7 +41,7 @@ const DashboardLayout = () => {
 
       {/* Sidebar */}
       <div
-        className={`h-full fixed top-0 left-0 z-40 w-64 transition-transform bg-gray-200  ${
+        className={`h-full fixed top-0 left-0 z-40 w-56 lg:w-56 transition-transform bg-gray-200  ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         } sm:translate-x-0`}
         id="default-sidebar"
@@ -50,15 +50,15 @@ const DashboardLayout = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-h-screen bg-gray-200">
+      <div className="flex-1 pl-2 flex flex-col min-h-screen bg-gray-200">
         {/* Header */}
         <div className="fixed top-0 right-0 z-30 w-full bg-gray-200 text-white ">
-          <div className="flex flex-row items-center justify-between p-4">
+          <div className="flex flex-row items-center justify-between">
             {/* Sidebar Toggle Button */}
             <button
               type="button"
               onClick={toggleSidebar}
-              className="text-red-600 hover:text-red-900 focus:outline-none sm:hidden"
+              className="text-red-600 hover:text-red-900 focus:outline-none sm:hidden pl-2"
             >
               <FaBars className="mt-16 w-6 h-6" />
             </button>

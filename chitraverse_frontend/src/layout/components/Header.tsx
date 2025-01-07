@@ -10,17 +10,17 @@ const Header = () => {
   
   return (
     <header className=" text-gray-900 ">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-end items-center py-4">
+      <div className="max-w-7xl mx-auto pl-32 pr-4 sm:px-6 lg:px-8">
+        <div className="flex justify-end items-center py-2">
           {/* Search Bar (Hidden on Small Devices) */}
           <div className="hidden sm:flex items-center space-x-4">
             <div className="relative">
               <input
                 type="text"
-                className="w-full pl-8 pr-4 py-2 rounded-lg bg-white text-gray-800 focus:ring-2 focus:ring-purple-300 focus:outline-none"
+                className="w-full pl-8 pr-4 py-3 rounded-lg bg-white text-gray-800 focus:ring-2 focus:ring-purple-300 focus:outline-none"
                 placeholder="Search..."
               />
-              <FaSearch className="absolute left-3 top-2.5 text-red-600" />
+              <FaSearch className="absolute left-3 top-4 text-red-600" />
             </div>
           </div>
 

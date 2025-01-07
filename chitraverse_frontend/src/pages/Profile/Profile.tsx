@@ -4,7 +4,7 @@ import WatchHistory from "./components/WatchHistory";
 
 function Profile() {
   return (
-    <div className="container mx-auto px-2 py-28 lg:py-12 md:py-16">
+    <div className="container mx-auto px-2 py-12 lg:py-4 md:py-16">
       <UserDetails />
       <Playlist/>
       <WatchHistory/>
