@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useVideo } from "../../context/VideoContext";
-
+import { Link } from "react-router";
 const Home = () => {
   const { user, loading: authLoading } = useAuth();
   const { videos, loading, fetchVideos } = useVideo();
@@ -21,6 +21,7 @@ const Home = () => {
       {Array.isArray(videos) && videos.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {videos.map((video) => (
+            <Link to={`/videoplayer/${video._id}`} key={video._id}>
             <div
               key={video._id}
               className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transition duration-300 cursor-pointer transform hover:scale-95"
@@ -60,6 +61,7 @@ const Home = () => {
                 </p>
               </div>
             </div>
+            </Link>
           ))}
         </div>
       ) : (
