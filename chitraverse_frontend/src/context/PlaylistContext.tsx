@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import { createContext, useContext, useState, ReactNode} from "react";
 import { fetchPlaylists as fetchPlaylistsApi } from "../api/playlist";
 import { IPlaylist } from "../interfaces/interface";
 
@@ -28,10 +28,6 @@ export const PlaylistProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchPlaylists();
-  }, []);
 
   return (
     <PlaylistContext.Provider value={{ playlists, loading, fetchPlaylists }}>
