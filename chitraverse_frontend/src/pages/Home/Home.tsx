@@ -17,7 +17,7 @@ const Home = () => {
   }
 
   return (
-    <div className="container mx-auto px-2 py-28 lg:py-12 md:py-16">
+    <div className="container mx-auto px-2 py-16 lg:py-4 md:py-6">
       {Array.isArray(videos) && videos.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {videos.map((video) => (
