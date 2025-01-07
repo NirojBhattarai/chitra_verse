@@ -6,6 +6,7 @@ import Home from "../pages/Home/Home";
 import Profile from "../pages/Profile/Profile"
 import ProtectedRoutes from "./protectedRoutes";
 import Playlist from "../pages/Profile/components/Playlist";
+import VideoPlayer from "../pages/Video/VideoPlayer";
 
 export const routes: RouteObject[] = [
   {
@@ -34,6 +35,10 @@ export const routes: RouteObject[] = [
       {
         path:"/playlist",
         element:<Playlist/>
+      },
+      {
+        path:"/videoplayer/:id",
+        element:<VideoPlayer/>
       }
     ],
   },

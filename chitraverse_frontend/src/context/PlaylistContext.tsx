@@ -21,7 +21,6 @@ export const PlaylistProvider = ({ children }: { children: ReactNode }) => {
     try {
       const response = await fetchPlaylistsApi();
       setPlaylists(response); 
-      console.log(response);
     } catch (error) {
       console.error("Error fetching playlists:", error);
     } finally {
