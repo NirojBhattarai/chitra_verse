@@ -81,7 +81,7 @@ const SideBar = ({ isSidebarOpen }: SideBarProps) => {
           </li>
           <li>
             <Link
-              to="/liked-videos"
+              to="/likedvideos"
               className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-purple-200 group"
             >
               <FaHeart className="w-5 h-5 text-red-600 transition duration-75 group-hover:text-red-900" />

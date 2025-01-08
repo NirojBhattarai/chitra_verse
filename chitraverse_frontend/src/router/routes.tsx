@@ -7,6 +7,7 @@ import Profile from "../pages/Profile/Profile"
 import ProtectedRoutes from "./protectedRoutes";
 import Playlist from "../pages/Profile/components/Playlist";
 import VideoPlayer from "../pages/Video/VideoPlayer";
+import LikedVideos from "../pages/Profile/components/LikedVideos";
 
 export const routes: RouteObject[] = [
   {
@@ -39,6 +40,10 @@ export const routes: RouteObject[] = [
       {
         path:"/videoplayer/:id",
         element:<VideoPlayer/>
+      },
+      {
+        path:"/likedvideos",
+        element:<LikedVideos/>
       }
     ],
   },

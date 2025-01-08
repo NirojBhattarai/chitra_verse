@@ -46,3 +46,11 @@ export interface IComment{
   createdAt:string;
   updatedAt:string;
 }
+
+export interface ILikedVideos {
+  _id: string;
+  videos: string;
+  comment: string[];
+  tweet:string[];
+  likedby:string;
+}
